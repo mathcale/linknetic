@@ -1,17 +1,27 @@
+import { User } from '@supabase/supabase-js';
+
+import Navbar from '../components/Navbar/navbar.component';
+
 import { supabase } from '../utils/supabase.util';
 
-export default function DashboardPage({ user }) {
+interface DashboardPageProps {
+  user: User;
+}
+
+export default function DashboardPage({ user }: DashboardPageProps) {
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
-      <p>Hello, {user.user_metadata.name}</p>
+    <div className="container mx-auto px-4 py-4">
+      <Navbar title="Dashboard" user={user} />
+
+      <div className="prose mt-5">
+        <h1>Dashboard</h1>
+      </div>
     </div>
   );
 }
 
 export async function getServerSideProps({ req }) {
-  const { user } = await supabase.auth.api.getUserByCookie(req);
+  const { user, token } = await supabase.auth.api.getUserByCookie(req);
 
   if (!user) {
     return {
