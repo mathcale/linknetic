@@ -1,10 +1,18 @@
+import { ThemeProvider } from 'next-themes';
+
 import { UserContextProvider } from '../hooks/auth-user.hook';
 import '../styles/globals.css';
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <UserContextProvider>
-      <Component {...pageProps} />
-    </UserContextProvider>
+    <ThemeProvider
+      themes={[process.env.NEXT_PUBLIC_LIGHT_THEME_NAME, process.env.NEXT_PUBLIC_DARK_THEME_NAME]}
+      defaultTheme={process.env.NEXT_PUBLIC_LIGHT_THEME_NAME}
+      enableSystem={false}
+    >
+      <UserContextProvider>
+        <Component {...pageProps} />
+      </UserContextProvider>
+    </ThemeProvider>
   );
 }

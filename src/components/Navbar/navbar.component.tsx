@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { MouseEvent, useEffect } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTheme } from 'next-themes';
 import { User } from '@supabase/supabase-js';
-import { themeChange } from 'theme-change';
+import { MoonIcon, SunIcon } from '@heroicons/react/outline';
 
 import { SignOut } from '../../hooks/auth-user.hook';
-import { MoonIcon, SunIcon } from '@heroicons/react/outline';
 
 export interface NavbarProps {
   title?: string;
@@ -15,6 +15,29 @@ export interface NavbarProps {
 
 export default function Navbar({ title, user }: NavbarProps) {
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
+  const themeToggleRef = useRef(null);
+
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      themeToggleRef.current.checked =
+        theme === process.env.NEXT_PUBLIC_DARK_THEME_NAME ? true : false;
+    }
+  }, [mounted]);
+
+  const onThemeToggleClick = (e: ChangeEvent<HTMLInputElement>) => {
+    setTheme(
+      e.target.checked
+        ? process.env.NEXT_PUBLIC_DARK_THEME_NAME
+        : process.env.NEXT_PUBLIC_LIGHT_THEME_NAME
+    );
+  };
 
   const onSignOutClick = async (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -23,9 +46,9 @@ export default function Navbar({ title, user }: NavbarProps) {
     router.replace('/');
   };
 
-  useEffect(() => {
-    themeChange(false);
-  }, []);
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="navbar bg-primary shadow-xl rounded-box">
@@ -72,21 +95,25 @@ export default function Navbar({ title, user }: NavbarProps) {
       </div>
 
       <div className="navbar-end">
-        <span className="mr-3 flex flex-row">
-          <SunIcon width={18} className="inline" />
-
-          <div className="w-10 mx-2">
-            <span
-              data-toggle-theme="dark"
-              data-act-class="pl-4"
-              className="border rounded-full border-neutral flex items-center cursor-pointer w-10 transition-all duration-300 ease-in-out pl-0"
-            >
-              <span className="rounded-full w-3 h-3 m-1 bg-neutral"></span>
+        <div className="form-control mr-3">
+          <label className="label cursor-pointer">
+            <span className="label-text">
+              <SunIcon width={18} className="inline" />
             </span>
-          </div>
 
-          <MoonIcon width={18} className="inline" />
-        </span>
+            <input
+              type="checkbox"
+              className="toggle mx-2"
+              // @ts-ignore
+              onClick={onThemeToggleClick}
+              ref={themeToggleRef}
+            />
+
+            <span className="label-text">
+              <MoonIcon width={18} className="inline" />
+            </span>
+          </label>
+        </div>
 
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
