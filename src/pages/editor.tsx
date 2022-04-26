@@ -1,11 +1,25 @@
+import { useState } from 'react';
 import Head from 'next/head';
-import { PencilIcon, SaveIcon, TrashIcon, XIcon } from '@heroicons/react/outline';
+import { SaveIcon, XIcon, PlusIcon } from '@heroicons/react/outline';
+import { User } from '@supabase/supabase-js';
 
+import LinkCard from '../components/LinkCard/link-card.component';
 import Navbar from '../components/Navbar/navbar.component';
 
 import { supabase } from '../utils/supabase.util';
 
-export default function EditorPage({ user, data }) {
+interface EditorPageProps {
+  user: User;
+  data: any | null; // FIXME: use correct type
+  error: any | null; // FIXME: use correct type
+}
+
+export default function EditorPage({ user, data, error }: EditorPageProps) {
+  const [editedTitle, setEditedTitle] = useState<string>('');
+  const [editedUrl, setEditedUrl] = useState<string>('');
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   return (
     <>
       <Head>
@@ -23,22 +37,16 @@ export default function EditorPage({ user, data }) {
 
           <div className="my-12">
             {data.links.map(link => (
-              <div className="flex flex-row items-center mb-4" key={link.external_id}>
-                <div className="card bg-primary text-primary-content shadow-xl flex-auto">
-                  <div className="card-body p-5 text-center">
-                    <p className="m-0">{link.title}</p>
-                  </div>
-                </div>
-
-                <a href="#editLinkModal" className="btn btn-circle ml-3">
-                  <PencilIcon width={18} />
-                </a>
-
-                <a href="#deleteLinkModal" className="btn btn-error btn-circle bg-danger ml-3">
-                  <TrashIcon width={18} />
-                </a>
-              </div>
+              <LinkCard link={link} editable={true} key={link.external_id} />
             ))}
+
+            <div className="card bg-transparent text-primary-content shadow-xl flex-auto border-4 border-dashed rounded-2xl border-primary cursor-pointer">
+              <div className="card-body p-5 text-center">
+                <h3 className="m-0 flex flex-row items-center justify-center">
+                  <PlusIcon width={27} className="mr-2" /> Add new link
+                </h3>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -53,7 +61,11 @@ export default function EditorPage({ user, data }) {
                 <span className="label-text">Title</span>
               </label>
 
-              <input type="text" className="input input-bordered w-full" />
+              <input
+                type="text"
+                className="input input-bordered w-full"
+                onChange={e => setEditedTitle(e.target.value)}
+              />
             </div>
 
             <div className="form-control w-full">
@@ -61,7 +73,11 @@ export default function EditorPage({ user, data }) {
                 <span className="label-text">URL</span>
               </label>
 
-              <input type="url" className="input input-bordered w-full" />
+              <input
+                type="url"
+                className="input input-bordered w-full"
+                onChange={e => setEditedUrl(e.target.value)}
+              />
             </div>
           </form>
 
