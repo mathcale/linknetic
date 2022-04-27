@@ -7,6 +7,7 @@ import LinkCard from '../components/LinkCard/link-card.component';
 import Navbar from '../components/Navbar/navbar.component';
 
 import { supabase } from '../utils/supabase.util';
+import Modal from '../components/Modal/modal.component';
 
 interface EditorPageProps {
   user: User;
@@ -18,7 +19,61 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
   const [editedTitle, setEditedTitle] = useState<string>('');
   const [editedUrl, setEditedUrl] = useState<string>('');
 
+  const [isEditLinkModalVisible, setIsEditLinkModalVisible] = useState<boolean>(false);
+  const [isDeleteLinkModalVisible, setIsDeleteLinkModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const renderEditLinkModal = (): JSX.Element => (
+    <Modal
+      isVisible={isEditLinkModalVisible}
+      title="Edit link"
+      buttons={[
+        { title: 'Close', onClick: () => setIsEditLinkModalVisible(false) },
+        { title: 'Save', onClick: () => null, type: 'primary' },
+      ]}
+    >
+      <form>
+        <div className="form-control w-full">
+          <label className="label">
+            <span className="label-text">Title</span>
+          </label>
+
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            onChange={e => setEditedTitle(e.target.value)}
+          />
+        </div>
+
+        <div className="form-control w-full">
+          <label className="label">
+            <span className="label-text">URL</span>
+          </label>
+
+          <input
+            type="url"
+            className="input input-bordered w-full"
+            onChange={e => setEditedUrl(e.target.value)}
+          />
+        </div>
+      </form>
+    </Modal>
+  );
+
+  const renderDeleteLinkModal = (): JSX.Element => (
+    <Modal
+      isVisible={isDeleteLinkModalVisible}
+      title="Are you sure?"
+      buttons={[
+        { title: 'No', onClick: () => setIsDeleteLinkModalVisible(false) },
+        { title: 'Yes', onClick: () => null, type: 'danger' },
+      ]}
+    >
+      <p>
+        Do you <strong>really</strong> want to delete this item?
+      </p>
+    </Modal>
+  );
 
   return (
     <>
@@ -37,7 +92,13 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
 
           <div className="my-12">
             {data.links.map(link => (
-              <LinkCard link={link} editable={true} key={link.external_id} />
+              <LinkCard
+                key={link.external_id}
+                link={link}
+                editable={true}
+                onEditButtonClick={() => setIsEditLinkModalVisible(true)}
+                onDeleteButtonClick={() => setIsDeleteLinkModalVisible(true)}
+              />
             ))}
 
             <div className="card bg-transparent text-primary-content shadow-xl flex-auto border-4 border-dashed rounded-2xl border-primary cursor-pointer">
@@ -51,62 +112,8 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
         </div>
       </div>
 
-      <div className="modal" id="editLinkModal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Edit link</h3>
-
-          <form className="py-4">
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Title</span>
-              </label>
-
-              <input
-                type="text"
-                className="input input-bordered w-full"
-                onChange={e => setEditedTitle(e.target.value)}
-              />
-            </div>
-
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">URL</span>
-              </label>
-
-              <input
-                type="url"
-                className="input input-bordered w-full"
-                onChange={e => setEditedUrl(e.target.value)}
-              />
-            </div>
-          </form>
-
-          <div className="modal-action">
-            <a href="#" className="btn">
-              <XIcon width={16} className="mr-1" /> Close
-            </a>
-
-            <button className="btn btn-primary">
-              <SaveIcon width={16} className="mr-2" /> Save
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="modal" id="deleteLinkModal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Are you sure?</h3>
-          <p className="py-4">WIP</p>
-
-          <div className="modal-action">
-            <a href="#" className="btn">
-              No
-            </a>
-
-            <button className="btn btn-error bg-danger">Yes</button>
-          </div>
-        </div>
-      </div>
+      {renderEditLinkModal()}
+      {renderDeleteLinkModal()}
     </>
   );
 }

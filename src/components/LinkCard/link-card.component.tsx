@@ -1,11 +1,19 @@
+import { MouseEventHandler } from 'react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
 
 interface LinkCardProps {
   link: any; // FIXME: use correct type
   editable: boolean;
+  onEditButtonClick?: MouseEventHandler<HTMLButtonElement>;
+  onDeleteButtonClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
-export default function LinkCard({ link, editable }: LinkCardProps) {
+export default function LinkCard({
+  link,
+  editable,
+  onEditButtonClick,
+  onDeleteButtonClick,
+}: LinkCardProps) {
   return (
     <div className="flex flex-row items-center mb-4">
       <div className="card bg-primary text-primary-content shadow-xl flex-auto">
@@ -16,12 +24,13 @@ export default function LinkCard({ link, editable }: LinkCardProps) {
 
       {editable && (
         <>
-          <a href="#editLinkModal" className="btn btn-circle ml-3">
+          <button onClick={onEditButtonClick} className="btn btn-circle ml-3">
             <PencilIcon width={18} />
-          </a>
-          <a href="#deleteLinkModal" className="btn btn-error btn-circle bg-danger ml-3">
+          </button>
+
+          <button onClick={onDeleteButtonClick} className="btn btn-error btn-circle bg-danger ml-3">
             <TrashIcon width={18} />
-          </a>
+          </button>
         </>
       )}
     </div>
