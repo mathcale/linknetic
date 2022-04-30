@@ -2,7 +2,7 @@ import { MouseEventHandler, ReactNode } from 'react';
 
 interface ModalButton {
   title: string | JSX.Element;
-  type?: 'primary' | 'info' | 'warning' | 'danger';
+  type?: 'primary' | 'secondary' | 'info' | 'warning' | 'error';
   onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
