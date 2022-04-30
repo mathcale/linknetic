@@ -15,7 +15,7 @@ interface ModalProps {
 
 export default function Modal({ isVisible, title, buttons, children }: ModalProps) {
   return (
-    <div className={`modal${isVisible ? 'modal-open' : ''}`}>
+    <div className={`modal${isVisible ? ' modal-open' : ''}`}>
       <div className="modal-box">
         <h3 className="font-bold text-lg">{title}</h3>
 
