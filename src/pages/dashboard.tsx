@@ -14,7 +14,7 @@ export default function DashboardPage({ user }: DashboardPageProps) {
       <Navbar title="Dashboard" user={user} />
 
       <div className="prose mt-5">
-        <h1>Dashboard</h1>
+        <p>WIP</p>
       </div>
     </div>
   );
