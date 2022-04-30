@@ -51,7 +51,7 @@ export default function Navbar({ title, user }: NavbarProps) {
   }
 
   return (
-    <div className="navbar bg-primary shadow-xl rounded-box">
+    <div className="navbar bg-base-100 shadow-xl rounded-box">
       <div className="navbar-start">
         <div className="dropdown">
           <label tabIndex={0} className="btn btn-ghost btn-circle">
@@ -118,7 +118,11 @@ export default function Navbar({ title, user }: NavbarProps) {
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <img src={user.user_metadata.avatar_url} alt="User avatar" />
+              <img
+                src={user.user_metadata.avatar_url}
+                alt="User avatar"
+                referrerPolicy="no-referrer"
+              />
             </div>
           </label>
 
