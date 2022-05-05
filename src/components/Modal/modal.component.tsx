@@ -1,9 +1,9 @@
-import { MouseEventHandler, ReactNode } from 'react';
+import { MouseEvent, ReactNode } from 'react';
 
 interface ModalButton {
   title: string | JSX.Element;
   type?: 'primary' | 'secondary' | 'info' | 'warning' | 'error';
-  onClick: MouseEventHandler<HTMLButtonElement>;
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void | Promise<void>;
 }
 
 interface ModalProps {

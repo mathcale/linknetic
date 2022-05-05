@@ -1,0 +1,11 @@
+export interface Link {
+  readonly id: number;
+  external_id: string;
+  title: string;
+  url: string;
+  index: number;
+  page_id: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+}

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import Head from 'next/head';
-import { SaveIcon, XIcon, PlusIcon } from '@heroicons/react/outline';
+import { PlusIcon } from '@heroicons/react/outline';
 import { User } from '@supabase/supabase-js';
 
 import LinkCard from '../components/LinkCard/link-card.component';
@@ -15,45 +15,98 @@ interface EditorPageProps {
   error: any | null; // FIXME: use correct type
 }
 
-export default function EditorPage({ user, data, error }: EditorPageProps) {
-  const [editedTitle, setEditedTitle] = useState<string>('');
-  const [editedUrl, setEditedUrl] = useState<string>('');
+const urlRegex =
+  /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
 
-  const [isEditLinkModalVisible, setIsEditLinkModalVisible] = useState<boolean>(false);
+export default function EditorPage({ user, data, error }: EditorPageProps) {
+  const [linkExternalId, setLinkExternalId] = useState<string>('');
+
+  const [title, setTitle] = useState<string>('');
+  const [titleHasError, setTitleHasError] = useState<boolean>(false);
+
+  const [url, setUrl] = useState<string>('');
+  const [urlHasError, setUrlHasError] = useState<boolean>(false);
+
+  const [isCreateOrEditLinkModalVisible, setIsCreateOrEditLinkModalVisible] =
+    useState<boolean>(false);
   const [isDeleteLinkModalVisible, setIsDeleteLinkModalVisible] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const renderEditLinkModal = (): JSX.Element => (
+  const onSaveLinkPress = (event: MouseEvent<HTMLButtonElement>) => {
+    if (titleHasError || urlHasError) {
+      return;
+    }
+
+    const payload = {
+      title,
+      url,
+    };
+
+    alert(JSON.stringify(payload));
+  };
+
+  const renderCreateOrEditLinkModal = (): JSX.Element => (
     <Modal
-      isVisible={isEditLinkModalVisible}
-      title="Edit link"
+      isVisible={isCreateOrEditLinkModalVisible}
+      title={isEditing ? 'Edit link' : 'Add link'}
       buttons={[
-        { title: 'Close', onClick: () => setIsEditLinkModalVisible(false) },
-        { title: 'Save', onClick: () => null, type: 'primary' },
+        {
+          title: 'Close',
+          onClick: () => {
+            setTitle('');
+            setTitleHasError(false);
+
+            setUrl('');
+            setUrlHasError(false);
+
+            setIsEditing(false);
+            setIsCreateOrEditLinkModalVisible(false);
+          },
+        },
+        { title: 'Save', onClick: onSaveLinkPress, type: 'primary' },
       ]}
     >
       <form>
         <div className="form-control w-full">
           <label className="label">
-            <span className="label-text">Title</span>
+            <span className={`label-text${titleHasError ? ' text-error' : ''}`}>Title</span>
           </label>
 
           <input
             type="text"
-            className="input input-bordered w-full"
-            onChange={e => setEditedTitle(e.target.value)}
+            className={`input input-bordered w-full${titleHasError ? ' input-error' : ''}`}
+            value={title}
+            onChange={e => {
+              setTitleHasError(false);
+              setTitle(e.target.value);
+
+              if (e.target.value.match(/^$/g)) {
+                setTitleHasError(true);
+              }
+            }}
+            required
           />
         </div>
 
         <div className="form-control w-full">
           <label className="label">
-            <span className="label-text">URL</span>
+            <span className={`label-text${urlHasError ? ' text-error' : ''}`}>URL</span>
           </label>
 
           <input
             type="url"
-            className="input input-bordered w-full"
-            onChange={e => setEditedUrl(e.target.value)}
+            className={`input input-bordered w-full${urlHasError ? ' input-error' : ''}`}
+            value={url}
+            onChange={e => {
+              setUrlHasError(false);
+              setUrl(e.target.value);
+
+              if (!e.target.value.match(urlRegex)) {
+                setUrlHasError(true);
+              }
+            }}
+            required
           />
         </div>
       </form>
@@ -65,8 +118,8 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
       isVisible={isDeleteLinkModalVisible}
       title="Are you sure?"
       buttons={[
-        { title: 'No', onClick: () => setIsDeleteLinkModalVisible(false) },
-        { title: 'Yes', onClick: () => null, type: 'danger' },
+        { title: 'No', type: 'secondary', onClick: () => setIsDeleteLinkModalVisible(false) },
+        { title: 'Yes', type: 'error', onClick: () => null },
       ]}
     >
       <p>
@@ -96,23 +149,34 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
                 key={link.external_id}
                 link={link}
                 editable={true}
-                onEditButtonClick={() => setIsEditLinkModalVisible(true)}
+                onEditButtonClick={() => {
+                  setLinkExternalId(link.external_id);
+                  setTitle(link.title);
+                  setUrl(link.url);
+
+                  setIsEditing(true);
+                  setIsCreateOrEditLinkModalVisible(true);
+                }}
                 onDeleteButtonClick={() => setIsDeleteLinkModalVisible(true)}
               />
             ))}
 
-            <div className="card bg-transparent text-primary-content shadow-xl flex-auto border-4 border-dashed rounded-2xl border-primary cursor-pointer">
-              <div className="card-body p-5 text-center">
+            <button
+              type="button"
+              className="card bg-transparent text-primary-content shadow-xl flex-auto border-4 border-dashed rounded-2xl border-primary cursor-pointer no-underline w-full"
+              onClick={() => setIsCreateOrEditLinkModalVisible(true)}
+            >
+              <div className="card-body p-5 text-center w-full">
                 <h3 className="m-0 flex flex-row items-center justify-center">
                   <PlusIcon width={27} className="mr-2" /> Add new link
                 </h3>
               </div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
 
-      {renderEditLinkModal()}
+      {renderCreateOrEditLinkModal()}
       {renderDeleteLinkModal()}
     </>
   );
