@@ -1,7 +1,12 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+
+import { Link } from '../../../services/links/link.model';
+import { Page } from '../../../services/pages/page.model';
+
 import { supabase } from '../../../utils/supabase.util';
 
-export default async function handler(req, res) {
-  const token = req.headers.token;
+export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+  const token = <string>req.headers.token;
   const { data: user, error } = await supabase.auth.api.getUser(token);
 
   if (error) {
@@ -9,11 +14,11 @@ export default async function handler(req, res) {
   }
 
   const { data: getPageResult, error: getPageError } = await supabase
-    .from('pages')
+    .from<Page>('pages')
     .select('*')
     .eq('user_id', user.id)
     .is('deleted_at', null)
-    .limit(10);
+    .limit(1);
 
   if (getPageError) {
     console.error({ getPageError });
@@ -21,12 +26,13 @@ export default async function handler(req, res) {
   }
 
   const { data: getLinksResult, error: getLinksError } = await supabase
-    .from('links')
+    .from<Link>('links')
     .select(
       `
       external_id,
       title,
       url,
+      index,
       created_at,
       updated_at
   `

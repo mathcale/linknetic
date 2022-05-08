@@ -1,8 +1,11 @@
 import { MouseEventHandler } from 'react';
+import { motion } from 'framer-motion';
 import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
 
+import { Link } from '../../services/links/link.model';
+
 interface LinkCardProps {
-  link: any; // FIXME: use correct type
+  link: Link;
   editable: boolean;
   onEditButtonClick?: MouseEventHandler<HTMLButtonElement>;
   onDeleteButtonClick?: MouseEventHandler<HTMLButtonElement>;
@@ -15,7 +18,13 @@ export default function LinkCard({
   onDeleteButtonClick,
 }: LinkCardProps) {
   return (
-    <div className="flex flex-row items-center mb-4">
+    <motion.div
+      className="flex flex-row items-center mb-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, delay: link.index * 0.03 }}
+    >
       <div className="card bg-primary text-primary-content shadow-xl flex-auto">
         <div className="card-body p-5 text-center">
           <p className="m-0">{link.title}</p>
@@ -33,6 +42,6 @@ export default function LinkCard({
           </button>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }

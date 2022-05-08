@@ -1,13 +1,16 @@
 import { MouseEvent, useState } from 'react';
 import Head from 'next/head';
-import { PlusIcon } from '@heroicons/react/outline';
+import { useRouter } from 'next/router';
 import { User } from '@supabase/supabase-js';
+import toast from 'react-hot-toast';
+import { AnimatePresence } from 'framer-motion';
+import { PlusIcon } from '@heroicons/react/outline';
 
 import LinkCard from '../components/LinkCard/link-card.component';
+import Modal from '../components/Modal/modal.component';
 import Navbar from '../components/Navbar/navbar.component';
 
 import { supabase } from '../utils/supabase.util';
-import Modal from '../components/Modal/modal.component';
 
 interface EditorPageProps {
   user: User;
@@ -33,7 +36,9 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const onSaveLinkPress = (event: MouseEvent<HTMLButtonElement>) => {
+  const router = useRouter();
+
+  const onSaveLinkPress = async (event: MouseEvent<HTMLButtonElement>): Promise<void | never> => {
     if (titleHasError || urlHasError) {
       return;
     }
@@ -43,7 +48,39 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
       url,
     };
 
-    alert(JSON.stringify(payload));
+    setIsLoading(true);
+
+    try {
+      const session = supabase.auth.session();
+
+      const response = await fetch('/api/links/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          token: session.access_token,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const responseBody = await response.json();
+        throw new Error(responseBody.error);
+      }
+
+      toast.success('Link successfully saved!');
+
+      setIsCreateOrEditLinkModalVisible(false);
+      setTitle('');
+      setUrl('');
+
+      router.replace(router.asPath);
+    } catch (err) {
+      // TODO: handle error
+      console.error({ err });
+      toast.error('There was a problem while saving your link...');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const renderCreateOrEditLinkModal = (): JSX.Element => (
@@ -66,6 +103,7 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
         },
         { title: 'Save', onClick: onSaveLinkPress, type: 'primary' },
       ]}
+      isLoading={isLoading}
     >
       <form>
         <div className="form-control w-full">
@@ -85,6 +123,7 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
                 setTitleHasError(true);
               }
             }}
+            disabled={isLoading}
             required
           />
         </div>
@@ -106,6 +145,7 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
                 setUrlHasError(true);
               }
             }}
+            disabled={isLoading}
             required
           />
         </div>
@@ -121,6 +161,7 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
         { title: 'No', type: 'secondary', onClick: () => setIsDeleteLinkModalVisible(false) },
         { title: 'Yes', type: 'error', onClick: () => null },
       ]}
+      isLoading={isLoading}
     >
       <p>
         Do you <strong>really</strong> want to delete this item?
@@ -144,22 +185,24 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
           </div>
 
           <div className="my-12">
-            {data.links.map(link => (
-              <LinkCard
-                key={link.external_id}
-                link={link}
-                editable={true}
-                onEditButtonClick={() => {
-                  setLinkExternalId(link.external_id);
-                  setTitle(link.title);
-                  setUrl(link.url);
+            <AnimatePresence>
+              {data.links.map(link => (
+                <LinkCard
+                  key={link.external_id}
+                  link={link}
+                  editable={true}
+                  onEditButtonClick={() => {
+                    setLinkExternalId(link.external_id);
+                    setTitle(link.title);
+                    setUrl(link.url);
 
-                  setIsEditing(true);
-                  setIsCreateOrEditLinkModalVisible(true);
-                }}
-                onDeleteButtonClick={() => setIsDeleteLinkModalVisible(true)}
-              />
-            ))}
+                    setIsEditing(true);
+                    setIsCreateOrEditLinkModalVisible(true);
+                  }}
+                  onDeleteButtonClick={() => setIsDeleteLinkModalVisible(true)}
+                />
+              ))}
+            </AnimatePresence>
 
             <button
               type="button"

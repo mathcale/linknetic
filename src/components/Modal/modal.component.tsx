@@ -10,10 +10,11 @@ interface ModalProps {
   isVisible: boolean;
   title: string;
   buttons: [ModalButton, ModalButton?];
+  isLoading: boolean;
   children: ReactNode;
 }
 
-export default function Modal({ isVisible, title, buttons, children }: ModalProps) {
+export default function Modal({ isVisible, title, buttons, isLoading, children }: ModalProps) {
   return (
     <div className={`modal${isVisible ? ' modal-open' : ''}`}>
       <div className="modal-box">
@@ -26,8 +27,10 @@ export default function Modal({ isVisible, title, buttons, children }: ModalProp
             buttons.map((button, i) => (
               <button
                 key={i}
-                onClick={button.onClick}
-                className={`btn${button.type ? ` btn-${button.type}` : ''}`}
+                onClick={!isLoading && button.onClick}
+                className={`btn${button.type ? ` btn-${button.type}` : ''}${
+                  isLoading ? ' loading btn-disabled' : ''
+                }`}
               >
                 {button.title}
               </button>
