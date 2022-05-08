@@ -38,7 +38,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   `
     )
     .eq('page_id', getPageResult[0].id)
-    .is('deleted_at', null);
+    .is('deleted_at', null)
+    .order('index', { ascending: true });
 
   if (getLinksError) {
     console.error({ getLinksError });
