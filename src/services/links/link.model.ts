@@ -5,6 +5,7 @@ export interface Link {
   url: string;
   index: number;
   page_id: number;
+  user_id: string;
   created_at: string;
   updated_at: string;
   deleted_at: string;
