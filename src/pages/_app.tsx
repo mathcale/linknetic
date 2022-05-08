@@ -1,4 +1,5 @@
 import { ThemeProvider } from 'next-themes';
+import { Toaster } from 'react-hot-toast';
 
 import { UserContextProvider } from '../hooks/auth-user.hook';
 import '../styles/globals.css';
@@ -12,6 +13,7 @@ export default function MyApp({ Component, pageProps }) {
     >
       <UserContextProvider>
         <Component {...pageProps} />
+        <Toaster />
       </UserContextProvider>
     </ThemeProvider>
   );
