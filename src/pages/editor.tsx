@@ -52,9 +52,10 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
 
     try {
       const session = supabase.auth.session();
+      const endpoint = isEditing ? `/api/links/${linkExternalId}/edit` : '/api/links/create';
 
-      const response = await fetch('/api/links/create', {
-        method: 'POST',
+      const response = await fetch(endpoint, {
+        method: isEditing ? 'PATCH' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           token: session.access_token,
@@ -75,9 +76,8 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
 
       router.replace(router.asPath);
     } catch (err) {
-      // TODO: handle error
       console.error({ err });
-      toast.error('There was a problem while saving your link...');
+      toast.error('There was a problem while saving your link... Please, try again later!');
     } finally {
       setIsLoading(false);
     }
