@@ -24,6 +24,11 @@ const urlRegex =
 export default function EditorPage({ user, data, error }: EditorPageProps) {
   const [linkExternalId, setLinkExternalId] = useState<string>('');
 
+  const [pageTitle, setPageTitle] = useState<string>(data.page.title);
+  const [pageTitleHasError, setPageTitleHasError] = useState<boolean>(false);
+
+  const [pageDescription, setPageDescription] = useState<string>(data.page.description);
+
   const [title, setTitle] = useState<string>('');
   const [titleHasError, setTitleHasError] = useState<boolean>(false);
 
@@ -231,8 +236,33 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
 
         <div className="prose mx-auto mt-10">
           <div className="text-center">
-            <h1 className="mb-0">{data.page.title}</h1>
-            {data.page.description && <p className="my-0">{data.page.description}</p>}
+            <input
+              type="text"
+              value={pageTitle}
+              maxLength={30}
+              onChange={e => {
+                setPageTitleHasError(false);
+                setPageTitle(e.target.value);
+
+                if (e.target.value.match(/^$/g) || e.target.value.length < 3) {
+                  setPageTitleHasError(true);
+                }
+              }}
+              className={`input input-bordered input-ghost w-full max-w mb-5 py-8 text-center text-4xl font-bold${
+                pageTitleHasError ? ' input-error' : ''
+              }`}
+              disabled={isLoading}
+              required
+            />
+            {data.page.description && (
+              <textarea
+                value={pageDescription}
+                maxLength={120}
+                onChange={e => setPageDescription(e.target.value)}
+                className="textarea textarea-bordered textarea-ghost w-full max-w text-center text-lg resize-none"
+                disabled={isLoading}
+              />
+            )}
           </div>
 
           <div className="my-12">
