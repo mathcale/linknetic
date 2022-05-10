@@ -83,6 +83,44 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
     }
   };
 
+  const onDeleteLinkClick = async (event: MouseEvent<HTMLButtonElement>): Promise<void | never> => {
+    if (!linkExternalId) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const session = supabase.auth.session();
+      const endpoint = `/api/links/${linkExternalId}/delete`;
+
+      const response = await fetch(endpoint, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          token: session.access_token,
+        },
+      });
+
+      if (!response.ok) {
+        const responseBody = await response.json();
+        throw new Error(responseBody.error);
+      }
+
+      toast.success('Link successfully deleted!');
+
+      setIsDeleteLinkModalVisible(false);
+      setLinkExternalId('');
+
+      router.replace(router.asPath);
+    } catch (err) {
+      console.error({ err });
+      toast.error('There was a problem while saving your link... Please, try again later!');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const renderCreateOrEditLinkModal = (): JSX.Element => (
     <Modal
       isVisible={isCreateOrEditLinkModalVisible}
@@ -158,8 +196,15 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
       isVisible={isDeleteLinkModalVisible}
       title="Are you sure?"
       buttons={[
-        { title: 'No', type: 'secondary', onClick: () => setIsDeleteLinkModalVisible(false) },
-        { title: 'Yes', type: 'error', onClick: () => null },
+        {
+          title: 'No',
+          type: 'secondary',
+          onClick: () => {
+            setLinkExternalId('');
+            setIsDeleteLinkModalVisible(false);
+          },
+        },
+        { title: 'Yes', type: 'error', onClick: onDeleteLinkClick },
       ]}
       isLoading={isLoading}
     >
@@ -199,7 +244,10 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
                     setIsEditing(true);
                     setIsCreateOrEditLinkModalVisible(true);
                   }}
-                  onDeleteButtonClick={() => setIsDeleteLinkModalVisible(true)}
+                  onDeleteButtonClick={() => {
+                    setLinkExternalId(link.external_id);
+                    setIsDeleteLinkModalVisible(true);
+                  }}
                 />
               ))}
             </AnimatePresence>
