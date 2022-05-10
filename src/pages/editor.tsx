@@ -65,7 +65,7 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
 
       if (!response.ok) {
         const responseBody = await response.json();
-        throw new Error(responseBody.error);
+        throw new Error(JSON.stringify(responseBody));
       }
 
       toast.success('Link successfully saved!');
@@ -77,7 +77,13 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
       router.replace(router.asPath);
     } catch (err) {
       console.error({ err });
-      toast.error('There was a problem while saving your link... Please, try again later!');
+      const parsedError = JSON.parse(err.message);
+
+      if (parsedError.code === 'ALLOWED_LINKS_PER_PAGE_LIMIT_REACHED') {
+        toast.error(parsedError.error);
+      } else {
+        toast.error('There was a problem while saving your link... Please, try again later!');
+      }
     } finally {
       setIsLoading(false);
     }

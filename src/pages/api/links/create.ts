@@ -24,19 +24,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     .is('deleted_at', null)
     .limit(1);
 
-  if (getPageError) {
-    console.error({ getPageError });
-    return res.status(500).json({ error: getPageError });
+  const { count: linksCount, error: linksCountError } = await supabase
+    .from<Page>('links')
+    .select('*', { count: 'exact' })
+    .eq('user_id', user.id)
+    .is('deleted_at', null);
+
+  if (linksCountError) {
+    console.error({ linksCountError });
+    return res.status(500).json({ error: linksCountError });
+  }
+
+  if (linksCount + 1 > getPageResult[0].allowed_link_quantity) {
+    return res.status(422).json({
+      code: 'ALLOWED_LINKS_PER_PAGE_LIMIT_REACHED',
+      error: `You're only allowed to have ${getPageResult[0].allowed_link_quantity} links on this page!`,
+    });
   }
 
   const link = req.body;
 
   // FIXME: improve validation with class-validator/class-transformer
   if (!link.title || !link.url) {
-    return res.status(400).json({ error: 'Invalid input' });
+    return res.status(400).json({ code: 'INPUT_VALIDATION_ERROR', error: 'Invalid input' });
   }
 
   link.page_id = getPageResult[0].id;
+  link.user_id = user.id;
 
   const { status, error: createLinkError } = await supabase.from<Link>('links').insert(link);
 
