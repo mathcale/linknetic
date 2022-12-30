@@ -1,9 +1,9 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { User } from '@supabase/supabase-js';
 import toast from 'react-hot-toast';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { PlusIcon } from '@heroicons/react/outline';
 
 import LinkCard from '../components/LinkCard/link-card.component';
@@ -24,10 +24,12 @@ const urlRegex =
 export default function EditorPage({ user, data, error }: EditorPageProps) {
   const [linkExternalId, setLinkExternalId] = useState<string>('');
 
-  const [pageTitle, setPageTitle] = useState<string>(data.page.title);
+  const [pageTitle, setPageTitle] = useState<string>(data.page.title || '');
   const [pageTitleHasError, setPageTitleHasError] = useState<boolean>(false);
+  const [hasPageTitleChanged, setHasPageTitleChanged] = useState<boolean>(false);
 
-  const [pageDescription, setPageDescription] = useState<string>(data.page.description);
+  const [pageDescription, setPageDescription] = useState<string>(data.page.description || '');
+  const [hasPageDescriptionChanged, setHasPageDescriptionChanged] = useState<boolean>(false);
 
   const [title, setTitle] = useState<string>('');
   const [titleHasError, setTitleHasError] = useState<boolean>(false);
@@ -42,6 +44,68 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    setHasPageTitleChanged(pageTitle !== data.page.title);
+    setIsEditing(pageTitle !== data.page.title);
+  }, [pageTitle]);
+
+  useEffect(() => {
+    setHasPageDescriptionChanged(pageDescription !== data.page.description);
+    setIsEditing(pageDescription !== data.page.description);
+  }, [pageDescription]);
+
+  const onSavePagePress = async (event: MouseEvent<HTMLButtonElement>): Promise<void | never> => {
+    if (pageTitleHasError) {
+      return;
+    }
+
+    const payload = {
+      title: pageTitle,
+      description: pageDescription,
+    };
+
+    setIsLoading(true);
+
+    try {
+      const session = supabase.auth.session();
+      const endpoint = isEditing ? `/api/pages/${data.page.external_id}/edit` : '/api/pages/create';
+
+      const response = await fetch(endpoint, {
+        method: isEditing ? 'PATCH' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          token: session.access_token,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const responseBody = await response.json();
+        throw new Error(JSON.stringify(responseBody));
+      }
+
+      toast.success('Link successfully saved!');
+
+      setIsEditing(false);
+      setPageTitleHasError(false);
+      setHasPageTitleChanged(false);
+      setHasPageDescriptionChanged(false);
+
+      router.replace(router.asPath);
+    } catch (err) {
+      console.error({ err });
+      const parsedError = JSON.parse(err.message);
+
+      if (parsedError.code === 'ALLOWED_LINKS_PER_PAGE_LIMIT_REACHED') {
+        toast.error(parsedError.error);
+      } else {
+        toast.error('There was a problem while saving your link... Please, try again later!');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onSaveLinkPress = async (event: MouseEvent<HTMLButtonElement>): Promise<void | never> => {
     if (titleHasError || urlHasError) {
@@ -254,15 +318,29 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
               disabled={isLoading}
               required
             />
-            {data.page.description && (
-              <textarea
-                value={pageDescription}
-                maxLength={120}
-                onChange={e => setPageDescription(e.target.value)}
-                className="textarea textarea-bordered textarea-ghost w-full max-w text-center text-lg resize-none"
-                disabled={isLoading}
-              />
-            )}
+
+            <textarea
+              value={pageDescription}
+              maxLength={120}
+              onChange={e => setPageDescription(e.target.value)}
+              className="textarea textarea-bordered textarea-ghost w-full max-w text-center text-lg resize-none"
+              disabled={isLoading}
+            />
+
+            <AnimatePresence>
+              {(hasPageTitleChanged || hasPageDescriptionChanged) && (
+                <motion.button
+                  onClick={onSavePagePress}
+                  className={`btn${isLoading ? ' loading btn-disabled' : ''}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  Save changes
+                </motion.button>
+              )}
+            </AnimatePresence>
           </div>
 
           <div className="my-12">
