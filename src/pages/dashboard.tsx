@@ -21,7 +21,7 @@ export default function DashboardPage({ user }: DashboardPageProps) {
 }
 
 export async function getServerSideProps({ req }) {
-  const { user, token } = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
 
   if (!user) {
     return {
