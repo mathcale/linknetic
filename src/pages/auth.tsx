@@ -1,3 +1,5 @@
+import Navbar from '../components/Navbar/navbar.component';
+
 import { AuthRedirect } from '../hooks/auth-user.hook';
 import { supabase } from '../utils/supabase.util';
 
@@ -11,20 +13,26 @@ export default function IndexPage() {
   };
 
   return (
-    <div>
-      <h1 className="text-6xl">Auth</h1>
+    <div className="container mx-auto px-4 py-4 h-screen">
+      <Navbar title="Sign in" user={false} />
 
-      <button type="button" className="btn" onClick={e => onSignInButtonClick('facebook', e)}>
-        Sign in with Facebook
-      </button>
+      <div className="flex flex-col align-center justify-center h-screen">
+        <button
+          type="button"
+          className="btn mb-5"
+          onClick={e => onSignInButtonClick('facebook', e)}
+        >
+          Sign in with Facebook
+        </button>
 
-      <button type="button" className="btn" onClick={e => onSignInButtonClick('google', e)}>
-        Sign in with Google
-      </button>
+        <button type="button" className="btn mb-5" onClick={e => onSignInButtonClick('google', e)}>
+          Sign in with Google
+        </button>
 
-      <button type="button" className="btn" onClick={e => onSignInButtonClick('twitter', e)}>
-        Sign in with Twitter
-      </button>
+        <button type="button" className="btn mb-5" onClick={e => onSignInButtonClick('twitter', e)}>
+          Sign in with Twitter
+        </button>
+      </div>
     </div>
   );
 }
