@@ -21,8 +21,8 @@ export default function IndexPage() {
           necessitatibus fugit beatae molestias? Animi.
         </p>
 
-        <Link href={user ? '/dashboard' : '/auth'} passHref>
-          <a className="btn btn-md">Start now</a>
+        <Link href={user ? '/dashboard' : '/auth'} className="btn btn-md" passHref>
+          Start now
         </Link>
       </div>
     </div>
