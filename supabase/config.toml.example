@@ -44,7 +44,7 @@ secret = "CHANGE_ME"
 [auth.external.facebook]
 enabled = false
 client_id = "CHANGE_ME"
-secret = ""
+secret = "CHANGE_ME"
 # redirect_uri = ""
 # url = ""
 
