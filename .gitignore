@@ -32,8 +32,9 @@ yarn-error.log*
 .vercel
 
 .env
+.env.production
+.env.local
 
 # Supabase
 **/supabase/.branches
 **/supabase/.temp
-
