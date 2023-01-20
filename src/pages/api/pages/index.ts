@@ -25,6 +25,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(500).json({ error: getPageError });
   }
 
+  if (getPageResult.length === 0) {
+    return res.status(200).json({
+      page: null,
+      links: [],
+    });
+  }
+
   const { data: getLinksResult, error: getLinksError } = await supabase
     .from<Link>('links')
     .select(
