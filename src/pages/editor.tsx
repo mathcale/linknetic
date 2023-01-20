@@ -24,11 +24,11 @@ const urlRegex =
 export default function EditorPage({ user, data, error }: EditorPageProps) {
   const [linkExternalId, setLinkExternalId] = useState<string>('');
 
-  const [pageTitle, setPageTitle] = useState<string>(data.page.title || '');
+  const [pageTitle, setPageTitle] = useState<string>(data.page?.title || '');
   const [pageTitleHasError, setPageTitleHasError] = useState<boolean>(false);
   const [hasPageTitleChanged, setHasPageTitleChanged] = useState<boolean>(false);
 
-  const [pageDescription, setPageDescription] = useState<string>(data.page.description || '');
+  const [pageDescription, setPageDescription] = useState<string>(data.page?.description || '');
   const [hasPageDescriptionChanged, setHasPageDescriptionChanged] = useState<boolean>(false);
 
   const [title, setTitle] = useState<string>('');
@@ -46,14 +46,17 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
   const router = useRouter();
 
   useEffect(() => {
-    setHasPageTitleChanged(pageTitle !== data.page.title);
-    setIsEditing(pageTitle !== data.page.title);
+    setHasPageTitleChanged(pageTitle !== data.page?.title);
+    setPageTitleHasError(isPageTitleValid(pageTitle));
+    setIsEditing(data.page && pageTitle !== data.page?.title);
   }, [pageTitle]);
 
   useEffect(() => {
-    setHasPageDescriptionChanged(pageDescription !== data.page.description);
-    setIsEditing(pageDescription !== data.page.description);
+    setHasPageDescriptionChanged(pageDescription !== data.page?.description);
+    setIsEditing(data.page && pageDescription !== data.page?.description);
   }, [pageDescription]);
+
+  const isPageTitleValid = (value: string): boolean => !!value.match(/^$/g) || value.length < 3;
 
   const onSavePagePress = async (event: MouseEvent<HTMLButtonElement>): Promise<void | never> => {
     if (pageTitleHasError) {
@@ -69,7 +72,9 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
 
     try {
       const session = supabase.auth.session();
-      const endpoint = isEditing ? `/api/pages/${data.page.external_id}/edit` : '/api/pages/create';
+      const endpoint = isEditing
+        ? `/api/pages/${data.page?.external_id}/edit`
+        : '/api/pages/create';
 
       const response = await fetch(endpoint, {
         method: isEditing ? 'PATCH' : 'POST',
@@ -304,13 +309,9 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
               type="text"
               value={pageTitle}
               maxLength={30}
+              placeholder="Page title"
               onChange={e => {
-                setPageTitleHasError(false);
                 setPageTitle(e.target.value);
-
-                if (e.target.value.match(/^$/g) || e.target.value.length < 3) {
-                  setPageTitleHasError(true);
-                }
               }}
               className={`input input-bordered input-ghost w-full max-w mb-5 py-8 text-center text-4xl font-bold${
                 pageTitleHasError ? ' input-error' : ''
@@ -322,6 +323,7 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
             <textarea
               value={pageDescription}
               maxLength={120}
+              placeholder="Page description"
               onChange={e => setPageDescription(e.target.value)}
               className="textarea textarea-bordered textarea-ghost w-full max-w text-center text-lg resize-none"
               disabled={isLoading}
@@ -366,17 +368,21 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
               ))}
             </AnimatePresence>
 
-            <button
-              type="button"
-              className="card bg-transparent text-primary-content shadow-xl flex-auto border-4 border-dashed rounded-2xl border-primary cursor-pointer no-underline w-full"
-              onClick={() => setIsCreateOrEditLinkModalVisible(true)}
-            >
-              <div className="card-body p-5 text-center w-full">
-                <h3 className="m-0 flex flex-row items-center justify-center">
-                  <PlusIcon width={27} className="mr-2" /> Add new link
-                </h3>
-              </div>
-            </button>
+            {data.page && (
+              <AnimatePresence>
+                <button
+                  type="button"
+                  className="card bg-transparent text-primary-content shadow-xl flex-auto border-4 border-dashed rounded-2xl border-primary cursor-pointer no-underline w-full"
+                  onClick={() => setIsCreateOrEditLinkModalVisible(true)}
+                >
+                  <div className="card-body p-5 text-center w-full">
+                    <h3 className="m-0 flex flex-row items-center justify-center">
+                      <PlusIcon width={27} className="mr-2" /> Add new link
+                    </h3>
+                  </div>
+                </button>
+              </AnimatePresence>
+            )}
           </div>
         </div>
       </div>
