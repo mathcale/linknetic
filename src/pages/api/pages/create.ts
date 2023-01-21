@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const { status, error: createPageError } = await supabase.from<Page>('pages').insert({
     user_id: user.id,
-    external_id: uuid(),
+    external_id: uuid().split('-')[0],
     title: req.body.title,
     description: req.body.description,
     allowed_link_quantity: 10,
