@@ -24,6 +24,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     .is('deleted_at', null)
     .limit(1);
 
+  if (getPageError) {
+    console.error({ getPageError });
+    return res.status(500).json({ error: getPageError });
+  }
+
   const { count: linksCount, error: linksCountError } = await supabase
     .from<Page>('links')
     .select('*', { count: 'exact' })
