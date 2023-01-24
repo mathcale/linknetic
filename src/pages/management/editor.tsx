@@ -6,11 +6,11 @@ import toast from 'react-hot-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PlusIcon } from '@heroicons/react/outline';
 
-import LinkCard from '../components/LinkCard/link-card.component';
-import Modal from '../components/Modal/modal.component';
-import Navbar from '../components/Navbar/navbar.component';
+import LinkCard from '../../components/LinkCard/link-card.component';
+import Modal from '../../components/Modal/modal.component';
+import Navbar from '../../components/Navbar/navbar.component';
 
-import { supabase } from '../utils/supabase.util';
+import { supabase } from '../../utils/supabase.util';
 
 interface EditorPageProps {
   user: User;

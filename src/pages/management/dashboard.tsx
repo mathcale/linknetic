@@ -1,8 +1,8 @@
 import { User } from '@supabase/supabase-js';
 
-import Navbar from '../components/Navbar/navbar.component';
+import Navbar from '../../components/Navbar/navbar.component';
 
-import { supabase } from '../utils/supabase.util';
+import { supabase } from '../../utils/supabase.util';
 
 interface DashboardPageProps {
   user: User;

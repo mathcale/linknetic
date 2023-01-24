@@ -77,15 +77,15 @@ export default function Navbar({ title, user }: NavbarProps) {
               className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <Link href="/dashboard">Dashboard</Link>
+                <Link href="/management/dashboard">Dashboard</Link>
               </li>
 
               <li>
-                <Link href="/editor">Editor</Link>
+                <Link href="/management/editor">Editor</Link>
               </li>
 
               <li>
-                <Link href="/settings">Settings</Link>
+                <Link href="/management/settings">Settings</Link>
               </li>
             </ul>
           </div>
@@ -134,7 +134,7 @@ export default function Navbar({ title, user }: NavbarProps) {
               className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <Link href="/profile">Profile</Link>
+                <Link href="/management/profile">Profile</Link>
               </li>
 
               <li>
