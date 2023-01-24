@@ -12,8 +12,8 @@ export default function IndexPage() {
     <div className="container mx-auto px-4 py-4">
       <Navbar title="Linknetic" user={user} />
 
-      <div className="prose mt-10">
-        <h1 className="text-5xl mb-5">Cool title here</h1>
+      <div className="prose mx-auto mt-24 text-center">
+        <h1 className="text-5xl mb-5">Your links in one place!</h1>
 
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum magni fuga amet ex quod
