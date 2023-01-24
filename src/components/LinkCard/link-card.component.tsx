@@ -7,6 +7,7 @@ import { Link } from '../../services/links/link.model';
 interface LinkCardProps {
   link: Link;
   editable: boolean;
+  clickable?: boolean;
   onEditButtonClick?: MouseEventHandler<HTMLButtonElement>;
   onDeleteButtonClick?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -14,9 +15,19 @@ interface LinkCardProps {
 export default function LinkCard({
   link,
   editable,
+  clickable,
   onEditButtonClick,
   onDeleteButtonClick,
 }: LinkCardProps) {
+  const onCardClick = () => {
+    if (!clickable) {
+      return;
+    }
+
+    // TODO: save click event
+    window.open(link.url, '_blank');
+  };
+
   return (
     <motion.div
       className="flex flex-row items-center mb-4"
@@ -25,7 +36,12 @@ export default function LinkCard({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, delay: link.index * 0.03 }}
     >
-      <div className="card bg-primary text-primary-content shadow-xl flex-auto">
+      <div
+        className={`card bg-primary text-primary-content shadow-xl flex-auto${
+          clickable ? ' cursor-pointer' : ''
+        }`}
+        onClick={onCardClick}
+      >
         <div className="card-body p-5 text-center">
           <p className="m-0">{link.title}</p>
         </div>
