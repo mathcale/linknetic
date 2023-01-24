@@ -45,7 +45,7 @@ export const AuthRedirect = () => {
 
   useEffect(() => {
     if (user) {
-      router.push('/dashboard');
+      router.push('/management/dashboard');
     }
   }, [user, router]);
 };
