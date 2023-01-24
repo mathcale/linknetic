@@ -8,6 +8,7 @@ interface LinkCardProps {
   link: Link;
   editable: boolean;
   clickable?: boolean;
+  withInteractionAnimations?: boolean;
   onEditButtonClick?: MouseEventHandler<HTMLButtonElement>;
   onDeleteButtonClick?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -16,6 +17,7 @@ export default function LinkCard({
   link,
   editable,
   clickable,
+  withInteractionAnimations,
   onEditButtonClick,
   onDeleteButtonClick,
 }: LinkCardProps) {
@@ -35,6 +37,12 @@ export default function LinkCard({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, delay: link.index * 0.03 }}
+      whileHover={
+        withInteractionAnimations && {
+          scale: 1.02,
+          transition: { duration: 0.3 },
+        }
+      }
     >
       <div
         className={`card bg-primary text-primary-content shadow-xl flex-auto${
