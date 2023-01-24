@@ -1,14 +1,19 @@
-import { AnimatePresence } from 'framer-motion';
 import Head from 'next/head';
+import { AnimatePresence } from 'framer-motion';
+
 import type { GetServerSideProps } from 'next/types';
+
 import LinkCard from '../../components/LinkCard/link-card.component';
+import ShareButton from '../../components/ShareButton/share-button.component';
 
 interface UserLinksPageProps {
   data: any | null; // FIXME: use correct type
   error: any | null; // FIXME: use correct type
+  baseUrl: string;
+  externalId: string;
 }
 
-export default function UserLinksPage({ data, error }: UserLinksPageProps) {
+export default function UserLinksPage({ data, baseUrl, externalId, error }: UserLinksPageProps) {
   return (
     <>
       <Head>
@@ -25,7 +30,13 @@ export default function UserLinksPage({ data, error }: UserLinksPageProps) {
           <div className="my-12">
             <AnimatePresence>
               {data.links.map((link, i) => (
-                <LinkCard key={i} link={link} editable={false} clickable={true} />
+                <LinkCard
+                  key={i}
+                  link={link}
+                  editable={false}
+                  clickable={true}
+                  withInteractionAnimations={true}
+                />
               ))}
             </AnimatePresence>
           </div>
@@ -35,6 +46,8 @@ export default function UserLinksPage({ data, error }: UserLinksPageProps) {
           </div>
         </div>
       </div>
+
+      {data.page && <ShareButton url={`${baseUrl}/page/${externalId}`} />}
     </>
   );
 }
@@ -46,8 +59,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   if (!response.ok) {
     return {
       props: {
-        data: null,
         error: data.error,
+        data: null,
+        baseUrl: process.env.BASE_URL,
+        externalId: params.externalId,
       },
     };
   }
@@ -55,6 +70,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: {
       data,
+      baseUrl: process.env.BASE_URL,
+      externalId: params.externalId,
       error: null,
     },
   };

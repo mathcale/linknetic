@@ -11,17 +11,19 @@ import Modal from '../../components/Modal/modal.component';
 import Navbar from '../../components/Navbar/navbar.component';
 
 import { supabase } from '../../utils/supabase.util';
+import ShareButton from '../../components/ShareButton/share-button.component';
 
 interface EditorPageProps {
   user: User;
   data: any | null; // FIXME: use correct type
   error: any | null; // FIXME: use correct type
+  baseUrl: string;
 }
 
 const urlRegex =
   /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
 
-export default function EditorPage({ user, data, error }: EditorPageProps) {
+export default function EditorPage({ user, data, error, baseUrl }: EditorPageProps) {
   const [linkExternalId, setLinkExternalId] = useState<string>('');
 
   const [pageTitle, setPageTitle] = useState<string>(data.page?.title || '');
@@ -387,6 +389,8 @@ export default function EditorPage({ user, data, error }: EditorPageProps) {
         </div>
       </div>
 
+      {data.page && <ShareButton url={`${baseUrl}/page/${data.page?.external_id}`} />}
+
       {renderCreateOrEditLinkModal()}
       {renderDeleteLinkModal()}
     </>
@@ -420,6 +424,7 @@ export async function getServerSideProps({ req }) {
         user,
         data: null,
         error: data.error,
+        baseUrl: process.env.BASE_URL,
       },
     };
   }
@@ -429,6 +434,7 @@ export async function getServerSideProps({ req }) {
       user,
       data,
       error: null,
+      baseUrl: process.env.BASE_URL,
     },
   };
 }
