@@ -28,6 +28,7 @@ export default function LinkCard({
 
     window.open(link.url, '_blank');
 
+    // REFACTOR: move this to a service
     await fetch(`/api/links/${link.external_id}/click`, {
       method: 'POST',
     });
@@ -52,19 +53,30 @@ export default function LinkCard({
           clickable ? ' cursor-pointer' : ''
         }`}
         onClick={onCardClick}
+        aria-label="link-button"
       >
         <div className="card-body p-5 text-center">
-          <p className="m-0">{link.title}</p>
+          <p className="m-0" aria-label="link-title">
+            {link.title}
+          </p>
         </div>
       </div>
 
       {editable && (
         <>
-          <button onClick={onEditButtonClick} className="btn btn-circle ml-3">
+          <button
+            onClick={onEditButtonClick}
+            className="btn btn-circle ml-3"
+            aria-label="edit-link-button"
+          >
             <PencilIcon width={18} />
           </button>
 
-          <button onClick={onDeleteButtonClick} className="btn btn-error btn-circle bg-danger ml-3">
+          <button
+            onClick={onDeleteButtonClick}
+            className="btn btn-error btn-circle bg-danger ml-3"
+            aria-label="delete-link-button"
+          >
             <TrashIcon width={18} />
           </button>
         </>
