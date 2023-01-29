@@ -35,7 +35,7 @@ export default function DashboardPage({ user, data, error }: DashboardPageProps)
 
             <DashboardStatCard
               title="Links count"
-              count={data?.links?.length}
+              count={data?.links.length}
               icon={<SparklesIcon width={32} />}
             />
           </div>
@@ -51,14 +51,21 @@ export default function DashboardPage({ user, data, error }: DashboardPageProps)
                   <th>Total clicks</th>
                 </tr>
               </thead>
+
               <tbody>
-                {data?.links?.map((link, i) => (
-                  <tr key={i}>
-                    <td>{link.title}</td>
-                    <td>{link.url}</td>
-                    <td>{link.total_clicks}</td>
+                {data?.links.length === 0 ? (
+                  <tr>
+                    <td colSpan={3}>No links found</td>
                   </tr>
-                ))}
+                ) : (
+                  data?.links.map((link, i) => (
+                    <tr key={i}>
+                      <td>{link.title}</td>
+                      <td>{link.url}</td>
+                      <td>{link.total_clicks}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
