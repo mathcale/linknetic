@@ -35,7 +35,7 @@ export default function DashboardPage({ user, data, error }: DashboardPageProps)
 
             <DashboardStatCard
               title="Links count"
-              count={data?.links.length}
+              count={data?.links?.length}
               icon={<SparklesIcon width={32} />}
             />
           </div>
