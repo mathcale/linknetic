@@ -30,13 +30,7 @@ export default function UserLinksPage({ data, baseUrl, externalId, error }: User
           <div className="my-12">
             <AnimatePresence>
               {data.links.map((link, i) => (
-                <LinkCard
-                  key={i}
-                  link={link}
-                  editable={false}
-                  clickable={true}
-                  withInteractionAnimations={true}
-                />
+                <LinkCard key={i} link={link} editable={false} clickable={true} animated={true} />
               ))}
             </AnimatePresence>
           </div>
