@@ -26,11 +26,11 @@ export default function LinkCard({
       return;
     }
 
+    window.open(link.url, '_blank');
+
     await fetch(`/api/links/${link.external_id}/click`, {
       method: 'POST',
     });
-
-    window.open(link.url, '_blank');
   };
 
   return (
