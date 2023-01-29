@@ -38,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     .from<Link>('links')
     .select(
       `
+      external_id,
       title,
       url,
       index

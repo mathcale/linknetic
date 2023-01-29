@@ -21,12 +21,15 @@ export default function LinkCard({
   onEditButtonClick,
   onDeleteButtonClick,
 }: LinkCardProps) {
-  const onCardClick = () => {
+  const onCardClick = async (): Promise<void | never> => {
     if (!clickable) {
       return;
     }
 
-    // TODO: save click event
+    await fetch(`/api/links/${link.external_id}/click`, {
+      method: 'POST',
+    });
+
     window.open(link.url, '_blank');
   };
 

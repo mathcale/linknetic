@@ -4,6 +4,7 @@ export interface Link {
   title: string;
   url: string;
   index: number;
+  total_clicks: number;
   page_id: number;
   user_id: string;
   created_at: string;
