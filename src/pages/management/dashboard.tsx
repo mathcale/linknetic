@@ -52,7 +52,7 @@ export default function DashboardPage({ user, data, error }: DashboardPageProps)
                 </tr>
               </thead>
               <tbody>
-                {data?.links.map((link, i) => (
+                {data?.links?.map((link, i) => (
                   <tr key={i}>
                     <td>{link.title}</td>
                     <td>{link.url}</td>
