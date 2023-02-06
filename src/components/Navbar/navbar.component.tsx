@@ -51,7 +51,7 @@ export default function Navbar({ title, user }: NavbarProps) {
   }
 
   return (
-    <div className="navbar bg-base-100 shadow-xl rounded-box">
+    <div className="navbar bg-base-100 shadow-xl rounded-box" aria-label="navbar">
       <div className="navbar-start">
         {user && (
           <div className="dropdown">
