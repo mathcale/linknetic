@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import { AnimatePresence } from 'framer-motion';
 
 import type { GetServerSideProps } from 'next/types';
@@ -36,7 +37,12 @@ export default function UserLinksPage({ data, baseUrl, externalId, error }: User
           </div>
 
           <div className="text-center">
-            <p className="text-sm">Powered by Linknetic</p>
+            <p className="text-sm">
+              Powered by{' '}
+              <Link href="/" className="btn-link">
+                Linknetic
+              </Link>
+            </p>
           </div>
         </div>
       </div>
