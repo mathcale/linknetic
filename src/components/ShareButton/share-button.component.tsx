@@ -15,6 +15,7 @@ export default function ShareButton({ url }: ShareButtonProps) {
     <button
       className="btn gap-2 fixed z-90 bottom-5 right-5 sm:bottom-10 sm:right-10"
       onClick={onShareButtonPress}
+      aria-label="share-button"
     >
       <ShareIcon width={24} /> Share
     </button>
