@@ -1,9 +1,7 @@
 import Link from 'next/link';
 
-import Navbar from '../components/Navbar/navbar.component';
 import AuthUser from '../hooks/auth-user.hook';
-
-import { supabase } from '../utils/supabase.util';
+import Navbar from '../components/Navbar/navbar.component';
 
 export default function IndexPage() {
   const user = AuthUser();
@@ -13,7 +11,9 @@ export default function IndexPage() {
       <Navbar title="Linknetic" user={user} />
 
       <div className="prose mx-auto mt-24 text-center">
-        <h1 className="text-5xl mb-5">Your links in one place!</h1>
+        <h1 className="text-5xl mb-5" aria-label="main-title">
+          Your links in one place!
+        </h1>
 
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum magni fuga amet ex quod
@@ -21,20 +21,15 @@ export default function IndexPage() {
           necessitatibus fugit beatae molestias? Animi.
         </p>
 
-        <Link href={user ? '/management/dashboard' : '/auth'} className="btn btn-md" passHref>
+        <Link
+          href={user ? '/management/dashboard' : '/auth'}
+          className="btn btn-md"
+          aria-label="start-button"
+          passHref
+        >
           Start now
         </Link>
       </div>
     </div>
   );
-}
-
-export async function getServerSideProps({ req }) {
-  const { user } = await supabase.auth.api.getUserByCookie(req);
-
-  return {
-    props: {
-      user,
-    },
-  };
 }
