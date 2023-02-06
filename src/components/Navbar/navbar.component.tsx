@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
 import { User } from '@supabase/supabase-js';
-import { MoonIcon, SunIcon } from '@heroicons/react/outline';
+import { MoonIcon, SunIcon, MenuAlt2Icon } from '@heroicons/react/outline';
 
 import { SignOut } from '../../hooks/auth-user.hook';
 
@@ -55,21 +55,12 @@ export default function Navbar({ title, user }: NavbarProps) {
       <div className="navbar-start">
         {user && (
           <div className="dropdown">
-            <label tabIndex={0} className="btn btn-ghost btn-circle">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h7"
-                />
-              </svg>
+            <label
+              tabIndex={0}
+              className="btn btn-ghost btn-circle"
+              aria-label="navbar-dropdown-button"
+            >
+              <MenuAlt2Icon width={24} />
             </label>
 
             <ul
