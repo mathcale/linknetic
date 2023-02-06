@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import mockRouter from 'next-router-mock';
+import routerMock from 'next-router-mock';
 
 import Navbar, { NavbarProps } from './navbar.component';
 
@@ -50,7 +50,7 @@ describe('Navbar', () => {
         fireEvent.click(button);
 
         await waitFor(() => {
-          expect(mockRouter).toMatchObject({
+          expect(routerMock).toMatchObject({
             pathname: '/',
           });
         });
