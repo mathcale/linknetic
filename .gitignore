@@ -30,3 +30,12 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+.env
+.env.production
+.env.local
+
+# Supabase
+**/supabase/.branches
+**/supabase/.temp
+**/supabase/config.toml
