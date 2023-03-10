@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuid } from 'uuid';
 
-import { Page } from '../../../services/pages/page.model';
+import { Page } from '../../../modules/page/page.model';
 
 import { supabase } from '../../../utils/supabase.util';
 

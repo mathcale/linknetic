@@ -2,8 +2,8 @@ import { render } from '@testing-library/react';
 
 import UserLinksPage, { UserLinksPageProps } from '../../src/pages/page/[externalId]';
 
-import type { Link } from '../../src/services/links/link.model';
-import type { Page } from '../../src/services/pages/page.model';
+import type { Link } from '../../src/modules/link/link.model';
+import type { Page } from '../../src/modules/page/page.model';
 
 const makePageStub = (
   {

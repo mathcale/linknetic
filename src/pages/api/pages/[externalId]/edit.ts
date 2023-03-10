@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { Page } from '../../../../services/pages/page.model';
+import { Page } from '../../../../modules/page/page.model';
 
 import { supabase } from '../../../../utils/supabase.util';
 

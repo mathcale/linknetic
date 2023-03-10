@@ -2,7 +2,7 @@ import { render, fireEvent } from '@testing-library/react';
 
 import LinkCard from './link-card.component';
 
-import { Link } from '../../services/links/link.model';
+import { Link } from '../../modules/link/link.model';
 
 const makeLinkStub = (): Link => ({
   id: 1,

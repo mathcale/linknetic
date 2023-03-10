@@ -2,7 +2,7 @@ import { MouseEventHandler } from 'react';
 import { motion } from 'framer-motion';
 import { PencilIcon, TrashIcon } from '@heroicons/react/outline';
 
-import { Link } from '../../services/links/link.model';
+import { Link } from '../../modules/link/link.model';
 
 interface LinkCardProps {
   link: Link;

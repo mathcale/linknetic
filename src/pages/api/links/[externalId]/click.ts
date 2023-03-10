@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { ClickLog } from '../../../../services/click-logs/click-logs.model';
-import { CreateClickLogInput } from '../../../../services/click-logs/create-click-log.input';
-import { Link } from '../../../../services/links/link.model';
+import { ClickLog } from '../../../../modules/click-log/click-logs.model';
+import { CreateClickLogInput } from '../../../../modules/click-log/create-click-log.input';
+import { Link } from '../../../../modules/link/link.model';
 
 import { supabase } from '../../../../utils/supabase.util';
 

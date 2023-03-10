@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { Link } from '../../../services/links/link.model';
-import { Page } from '../../../services/pages/page.model';
+import { Link } from '../../../modules/link/link.model';
+import { Page } from '../../../modules/page/page.model';
 
 import { supabase } from '../../../utils/supabase.util';
 
